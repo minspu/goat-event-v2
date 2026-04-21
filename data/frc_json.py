@@ -146,7 +146,9 @@ def _build_basic_auth_header() -> str:
     username = os.getenv("AUTH_USERNAME")
     token = os.getenv("AUTH_TOKEN")
     if not username or not token:
-        raise FRCAuthorizationError("Missing AUTH_USERNAME or AUTH_TOKEN in .env for FRC API authorization.")
+        raise FRCAuthorizationError(
+            "Missing AUTH_USERNAME or AUTH_TOKEN in .env for FRC API authorization."
+        )
 
     raw = f"{username}:{token}".encode("utf-8")
     encoded = base64.b64encode(raw).decode("ascii")
@@ -192,7 +194,9 @@ def fetch_frc_json(url: str, timeout: float = 15.0) -> dict[str, Any]:
             body = exc.read().decode("utf-8", errors="replace")
         except Exception:
             body = ""
-        raise FRCHTTPError(f"HTTP {statusCode} returned for URL '{url}'. Response: {body[:300]}") from exc
+        raise FRCHTTPError(
+            f"HTTP {statusCode} returned for URL '{url}'. Response: {body[:300]}"
+        ) from exc
     except URLError as exc:
         raise FRCNetworkError(f"Request failed for URL '{url}': {exc}") from exc
     except TimeoutError as exc:
@@ -201,20 +205,28 @@ def fetch_frc_json(url: str, timeout: float = 15.0) -> dict[str, Any]:
     try:
         text = bodyBytes.decode("utf-8")
     except UnicodeDecodeError as exc:
-        raise FRCJSONDecodeError(f"Response from URL '{url}' is not UTF-8 text JSON.") from exc
+        raise FRCJSONDecodeError(
+            f"Response from URL '{url}' is not UTF-8 text JSON."
+        ) from exc
 
     try:
         payload: Any = json.loads(text)
     except json.JSONDecodeError as exc:
-        raise FRCJSONDecodeError(f"Response from URL '{url}' is not valid JSON. Body: {text[:300]}") from exc
+        raise FRCJSONDecodeError(
+            f"Response from URL '{url}' is not valid JSON. Body: {text[:300]}"
+        ) from exc
 
     if not is_json_object(payload):
-        raise FRCJSONTypeError(f"Expected JSON object (dict) from URL '{url}', got {type(payload).__name__}")
+        raise FRCJSONTypeError(
+            f"Expected JSON object (dict) from URL '{url}', got {type(payload).__name__}"
+        )
 
     return payload
 
 
-def request_frc_json(url: str, key: str, season: int, eventCode: str, timeout: float = 15.0) -> dict[str, Any]:
+def request_frc_json(
+    url: str, key: str, season: int, eventCode: str, timeout: float = 15.0
+) -> dict[str, Any]:
     """
     Return cached FRC JSON by key when available; otherwise fetch and cache it.
 
@@ -267,7 +279,11 @@ def _request_paginated_json(
         cachedPageTotal = cachedValue.get("pageTotal")
         if isinstance(cachedDataValue, list):
             cachedData = cast(list[object], cachedDataValue)
-            if isinstance(cachedTotal, int) and cachedTotal > 0 and len(cachedData) == cachedTotal:
+            if (
+                isinstance(cachedTotal, int)
+                and cachedTotal > 0
+                and len(cachedData) == cachedTotal
+            ):
                 return cachedValue
             if not isinstance(cachedTotal, int) and cachedPageTotal == 1:
                 return cachedValue
@@ -284,7 +300,9 @@ def _request_paginated_json(
 
         pageData = payload.get(payloadKey)
         if not isinstance(pageData, list):
-            raise ValueError(f"Invalid event data format for '{payloadKey}': expected a list")
+            raise ValueError(
+                f"Invalid event data format for '{payloadKey}': expected a list"
+            )
         typedPageData = cast(list[object], pageData)
 
         if mergedPayload is None:
@@ -351,7 +369,9 @@ def request_paginated_season_frc_json(
     return _request_paginated_json(cachePath, url, key, payloadKey, timeout)
 
 
-def request_season_frc_json(url: str, key: str, season: int, timeout: float = 15.0) -> dict[str, Any]:
+def request_season_frc_json(
+    url: str, key: str, season: int, timeout: float = 15.0
+) -> dict[str, Any]:
     """
     Return cached FRC JSON by key when available; otherwise fetch and cache it.
 

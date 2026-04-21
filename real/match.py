@@ -8,7 +8,13 @@ from enum import IntEnum
 from typing import Optional, Union, Any, cast
 from typing import TYPE_CHECKING
 
-from real.alliance import AllianceBase, AnonymousAlliance, Alliance, AllianceColor, AllianceRole
+from real.alliance import (
+    AllianceBase,
+    AnonymousAlliance,
+    Alliance,
+    AllianceColor,
+    AllianceRole,
+)
 from ruleset.tournament.protocol import TournamentLevel
 
 if TYPE_CHECKING:
@@ -30,7 +36,9 @@ class PlayoffRound(IntEnum):
 
 
 class Match:
-    def __init__(self, event: Event, tournamentLevel: TournamentLevel, matchNumber: int):
+    def __init__(
+        self, event: Event, tournamentLevel: TournamentLevel, matchNumber: int
+    ):
         self.event: Event = event
         self.tournamentLevel: TournamentLevel = tournamentLevel
         self.isReplay: bool = False
@@ -83,22 +91,40 @@ class Match:
                     return f"<Final {self.matchNumber - 13}>"
                 else:
                     return f"<Final Tiebreaker>"
-        raise ValueError(f"Invalid tournament level {self.tournamentLevel} for match {self.matchNumber}")
+        raise ValueError(
+            f"Invalid tournament level {self.tournamentLevel} for match {self.matchNumber}"
+        )
 
     def __repr__(self):
         return self.__str__()
 
     # Registration
 
-    def assign_team(self, team: Team, station: AllianceRole, allianceColor: AllianceColor, disqualified: bool):
+    def assign_team(
+        self,
+        team: Team,
+        station: AllianceRole,
+        allianceColor: AllianceColor,
+        disqualified: bool,
+    ):
         currentMatch = cast(Match, self)
         self.station[allianceColor][station] = team
-        if self.tournamentLevel == TournamentLevel.QUALIFICATION:  # only quals should assign teams to alliance
+        if (
+            self.tournamentLevel == TournamentLevel.QUALIFICATION
+        ):  # only quals should assign teams to alliance
             team.qualsMatches.append(currentMatch)
+            redAlliance, blueAlliance = (
+                cast(AnonymousAlliance, self.redAlliance),
+                cast(AnonymousAlliance, self.blueAlliance),
+            )
             if allianceColor == AllianceColor.RED:
-                self.redAlliance.assign_team(team, station)  # pyright: ignore[reportOptionalMemberAccess]
+                redAlliance.assign_team(
+                    team, station
+                )  # pyright: ignore[reportOptionalMemberAccess]
             else:
-                self.blueAlliance.assign_team(team, station)  # pyright: ignore[reportOptionalMemberAccess]
+                blueAlliance.assign_team(
+                    team, station
+                )  # pyright: ignore[reportOptionalMemberAccess]
         elif self.tournamentLevel == TournamentLevel.PLAYOFF:
             team.playoffMatches.append(currentMatch)
         if disqualified:
@@ -106,7 +132,9 @@ class Match:
 
     def assign_alliance(self, alliance: Alliance, allianceColor: AllianceColor):
         currentMatch = cast(Match, self)
-        if self.tournamentLevel == TournamentLevel.PLAYOFF:  # only playoffs should assign alliances to match
+        if (
+            self.tournamentLevel == TournamentLevel.PLAYOFF
+        ):  # only playoffs should assign alliances to match
             if allianceColor == AllianceColor.RED:
                 self.redAlliance = alliance
             else:
@@ -122,12 +150,18 @@ class Match:
             alliance = self.blueAlliance
         if alliance is not None:
             return alliance
-        raise ValueError(f"Alliance is not assigned for match {self} with alliance color {allianceColor}")
+        raise ValueError(
+            f"Alliance is not assigned for match {self} with alliance color {allianceColor}"
+        )
 
-    def get_team_from_station(self, allianceColor: AllianceColor, station: AllianceRole) -> Team:
+    def get_team_from_station(
+        self, allianceColor: AllianceColor, station: AllianceRole
+    ) -> Team:
         team = self.station.get(allianceColor, {}).get(station)
         if team is None:
-            raise ValueError(f"Team is not assigned for match {self} at station {station}")
+            raise ValueError(
+                f"Team is not assigned for match {self} at station {station}"
+            )
         return team
 
     def get_result(self) -> dict[MatchResult, list[AllianceBase]]:
@@ -148,33 +182,56 @@ class Match:
                     ties.append(self.redAlliance)
                     ties.append(self.blueAlliance)
                 if self.tournamentLevel == TournamentLevel.PLAYOFF:
-                    if any(team in self.dqTeams for team in self.redAlliance.teams.values()):
+                    if any(
+                        team in self.dqTeams for team in self.redAlliance.teams.values()
+                    ):
                         dq.append(self.redAlliance)
-                    if any(team in self.dqTeams for team in self.blueAlliance.teams.values()):
+                    if any(
+                        team in self.dqTeams
+                        for team in self.blueAlliance.teams.values()
+                    ):
                         dq.append(self.blueAlliance)
-                return {MatchResult.DQ: dq, MatchResult.WIN: wins, MatchResult.LOSS: loss, MatchResult.TIE: ties}
+                return {
+                    MatchResult.DQ: dq,
+                    MatchResult.WIN: wins,
+                    MatchResult.LOSS: loss,
+                    MatchResult.TIE: ties,
+                }
             raise ValueError(f"Winning Alliance is not assigned for match {self}")
         raise ValueError(f"Alliance is not assigned for match {self}")
 
     def get_result_by_alliance(self, alliance: AllianceBase) -> MatchResult:
         if alliance not in (self.redAlliance, self.blueAlliance):
-            raise ValueError(f"Alliance {alliance} is not in match {self} or not assigned yet")
+            raise ValueError(
+                f"Alliance {alliance} is not in match {self} or not assigned yet"
+            )
         if any(team in self.dqTeams for team in alliance.teams.values()):
             return MatchResult.DQ
         winningAlliance = self.winningAlliance
 
         if winningAlliance is not None:
             if winningAlliance == AllianceColor.RED:
-                return MatchResult.WIN if alliance == self.redAlliance else MatchResult.LOSS
+                return (
+                    MatchResult.WIN
+                    if alliance == self.redAlliance
+                    else MatchResult.LOSS
+                )
             elif winningAlliance == AllianceColor.BLUE:
-                return MatchResult.WIN if alliance == self.blueAlliance else MatchResult.LOSS
+                return (
+                    MatchResult.WIN
+                    if alliance == self.blueAlliance
+                    else MatchResult.LOSS
+                )
             else:
                 return MatchResult.TIE
         raise ValueError(f"Winner is not assigned for match {self}")
 
     def get_result_by_team(self, team: Team) -> MatchResult:
         if self.redAlliance and self.blueAlliance:
-            if team not in self.redAlliance.teams.values() and team not in self.blueAlliance.teams.values():
+            if (
+                team not in self.redAlliance.teams.values()
+                and team not in self.blueAlliance.teams.values()
+            ):
                 raise ValueError(f"Team {team} is not in match {self}")
             if team in self.dqTeams:
                 return MatchResult.DQ
@@ -189,9 +246,17 @@ class Match:
 
             if winningAlliance is not None:
                 if winningAlliance == AllianceColor.RED:
-                    return MatchResult.WIN if team in self.redAlliance.teams.values() else MatchResult.LOSS
+                    return (
+                        MatchResult.WIN
+                        if team in self.redAlliance.teams.values()
+                        else MatchResult.LOSS
+                    )
                 elif winningAlliance == AllianceColor.BLUE:
-                    return MatchResult.WIN if team in self.blueAlliance.teams.values() else MatchResult.LOSS
+                    return (
+                        MatchResult.WIN
+                        if team in self.blueAlliance.teams.values()
+                        else MatchResult.LOSS
+                    )
                 else:
                     return MatchResult.TIE
         raise ValueError(f"Alliance or score is not assigned for match {self}")

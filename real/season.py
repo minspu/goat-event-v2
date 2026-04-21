@@ -5,7 +5,11 @@ from __future__ import annotations
 
 from datetime import datetime
 
-from data.frc_json import FRCHTTPError, bypass_event_cache_file, bypassed_events_for_season
+from data.frc_json import (
+    FRCHTTPError,
+    bypass_event_cache_file,
+    bypassed_events_for_season,
+)
 from data.season_requests import request_season_data, SeasonRequestType
 from real.event import Event
 from real.team import SeasonTeam
@@ -45,7 +49,11 @@ class Season:
             eventCode = typedEventData.get("code")
             weekNumber = typedEventData.get("weekNumber")
 
-            if not isinstance(eventCode, str) or not eventCode.strip() or not isinstance(weekNumber, int):
+            if (
+                not isinstance(eventCode, str)
+                or not eventCode.strip()
+                or not isinstance(weekNumber, int)
+            ):
                 continue
 
             if eventCode in bypassed_events_for_season(self.season):

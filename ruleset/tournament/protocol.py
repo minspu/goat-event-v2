@@ -39,7 +39,9 @@ class TournamentRule(Protocol):
 
     # Getters
 
-    def get_playoff_from_round(self, round: PlayoffRound, part: int, match: int) -> Match: ...
+    def get_playoff_from_round(
+        self, round: PlayoffRound, part: int, match: int
+    ) -> Match: ...
 
     def get_round_part_winner(self, round: PlayoffRound, part: int) -> Alliance: ...
 

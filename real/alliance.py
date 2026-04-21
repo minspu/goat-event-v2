@@ -34,7 +34,9 @@ class AllianceRole(IntEnum):
 
 class AllianceBase:
     def __init__(self, event: Event):
-        self.color: AllianceColor = AllianceColor.NONE  # waiting for the event to assign
+        self.color: AllianceColor = (
+            AllianceColor.NONE
+        )  # waiting for the event to assign
         self.event: Event = event
         self.teams: dict[int, Team] = {}
 
@@ -97,5 +99,7 @@ class Alliance(AllianceBase):
     def get_team_from_role(self, allianceRole: AllianceRole) -> Team:
         team = self.teams.get(allianceRole)
         if team is None:
-            raise ValueError(f"Alliance role {allianceRole} does not exist in alliance {self}")
+            raise ValueError(
+                f"Alliance role {allianceRole} does not exist in alliance {self}"
+            )
         return team

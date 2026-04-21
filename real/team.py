@@ -98,30 +98,68 @@ class Team:
                 case 2:
                     darkhorses = 0
                     for allianceNumber in range(1, self.alliance.allianceNumber):
-                        if self.event.get_alliance_from_number(allianceNumber).teams[1].ranking > self.ranking:
+                        if (
+                            self.event.get_alliance_from_number(allianceNumber)
+                            .teams[1]
+                            .ranking
+                            > self.ranking
+                        ):
                             darkhorses += 1
-                    return self.ranking - (self.alliance.allianceNumber * 2 - 1) + darkhorses
+                    return (
+                        self.ranking
+                        - (self.alliance.allianceNumber * 2 - 1)
+                        + darkhorses
+                    )
                 case 3:
                     darkhorses = 0
                     for allianceNumber in range(8, self.alliance.allianceNumber, -1):
-                        if self.event.get_alliance_from_number(allianceNumber).teams[2].ranking > self.ranking:
+                        if (
+                            self.event.get_alliance_from_number(allianceNumber)
+                            .teams[2]
+                            .ranking
+                            > self.ranking
+                        ):
                             darkhorses += 1
                     for allianceNumber in range(1, 9):
-                        if self.event.get_alliance_from_number(allianceNumber).teams[1].ranking > self.ranking:
+                        if (
+                            self.event.get_alliance_from_number(allianceNumber)
+                            .teams[1]
+                            .ranking
+                            > self.ranking
+                        ):
                             darkhorses += 1
-                    return self.ranking - (24 - self.alliance.allianceNumber) + darkhorses
+                    return (
+                        self.ranking - (24 - self.alliance.allianceNumber) + darkhorses
+                    )
                 case 4:
                     darkhorses = 0
                     for allianceNumber in range(1, self.alliance.allianceNumber):
-                        if self.event.get_alliance_from_number(allianceNumber).teams[3].ranking > self.ranking:
+                        if (
+                            self.event.get_alliance_from_number(allianceNumber)
+                            .teams[3]
+                            .ranking
+                            > self.ranking
+                        ):
                             darkhorses += 1
                     for allianceNumber in range(8, 0, -1):
-                        if self.event.get_alliance_from_number(allianceNumber).teams[2].ranking > self.ranking:
+                        if (
+                            self.event.get_alliance_from_number(allianceNumber)
+                            .teams[2]
+                            .ranking
+                            > self.ranking
+                        ):
                             darkhorses += 1
                     for allianceNumber in range(1, 9):
-                        if self.event.get_alliance_from_number(allianceNumber).teams[1].ranking > self.ranking:
+                        if (
+                            self.event.get_alliance_from_number(allianceNumber)
+                            .teams[1]
+                            .ranking
+                            > self.ranking
+                        ):
                             darkhorses += 1
-                    return self.ranking - (23 + self.alliance.allianceNumber) + darkhorses
+                    return (
+                        self.ranking - (23 + self.alliance.allianceNumber) + darkhorses
+                    )
                 case _:
                     return None
         else:

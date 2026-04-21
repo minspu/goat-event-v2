@@ -189,7 +189,9 @@ class Event:
         if len(self.qualsMatches) > 0:
             return
 
-        qualificationMatchesData = self.request_event_data(EventRequestType.QUALIFICATION_MATCHES)
+        qualificationMatchesData = self.request_event_data(
+            EventRequestType.QUALIFICATION_MATCHES
+        )
 
         stationMap: dict[str, tuple[AllianceColor, AllianceRole]] = {
             "Red1": (AllianceColor.RED, AllianceRole.STATION_1),
@@ -423,7 +425,9 @@ class Event:
 
             self.awards.setdefault(awardName, []).append(award)
 
-    def _assign_score_details(self, tournamentLevel: TournamentLevel, requestType: EventRequestType) -> None:
+    def _assign_score_details(
+        self, tournamentLevel: TournamentLevel, requestType: EventRequestType
+    ) -> None:
         scoreDetailsData = self.request_event_data(requestType)
 
         for rawScoreDetails in scoreDetailsData:
@@ -465,10 +469,14 @@ class Event:
                     match.generalScoreDetails[fieldName] = fieldData
 
     def _request_qualification_score_details(self) -> None:
-        self._assign_score_details(TournamentLevel.QUALIFICATION, EventRequestType.QUALIFICATION_SCORE_DETAILS)
+        self._assign_score_details(
+            TournamentLevel.QUALIFICATION, EventRequestType.QUALIFICATION_SCORE_DETAILS
+        )
 
     def _request_playoff_score_details(self) -> None:
-        self._assign_score_details(TournamentLevel.PLAYOFF, EventRequestType.PLAYOFF_SCORE_DETAILS)
+        self._assign_score_details(
+            TournamentLevel.PLAYOFF, EventRequestType.PLAYOFF_SCORE_DETAILS
+        )
 
     # Getters
     def get_team_from_number(self, teamNumber: int) -> Team:
@@ -489,14 +497,18 @@ class Event:
             return alliance
         raise ValueError(f"Alliance with number {allianceNumber} not found")
 
-    def get_match_from_number(self, tournamentLevel: TournamentLevel, matchNumber: int) -> Match:
+    def get_match_from_number(
+        self, tournamentLevel: TournamentLevel, matchNumber: int
+    ) -> Match:
         if tournamentLevel == TournamentLevel.QUALIFICATION:
             match = self.qualsMatches.get(matchNumber)
         elif tournamentLevel == TournamentLevel.PLAYOFF:
             match = self.playoffMatches.get(matchNumber)
         if match is not None:
             return match
-        raise ValueError(f"Invalid match number {matchNumber} for tournament level {tournamentLevel}")
+        raise ValueError(
+            f"Invalid match number {matchNumber} for tournament level {tournamentLevel}"
+        )
 
     def get_award_from_name(self, awardName: str) -> list[Award]:
         awards = self.awards.get(awardName)
@@ -513,7 +525,9 @@ class Event:
         self.add_tournament_rule(tournamentRule)
         return self
 
-    def get_playoff_from_round(self, round: PlayoffRound, part: int, match: int) -> Match:
+    def get_playoff_from_round(
+        self, round: PlayoffRound, part: int, match: int
+    ) -> Match:
         if self.tournamentRule is not None:
             return self.tournamentRule.get_playoff_from_round(round, part, match)
         raise ValueError("Tournament rule not initialized for this event")
