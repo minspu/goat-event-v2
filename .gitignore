@@ -188,5 +188,3 @@ cache/
 .vscode/
 
 .codex/
-
-pdm.lock
