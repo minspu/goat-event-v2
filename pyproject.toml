@@ -1,0 +1,29 @@
+[project]
+name = "goat-event-v2"
+version = "26.4.0"
+description = "Data analysis and replay tools for analyzing FRC events."
+authors = [
+    {name = "Zong Yitong", email = "819670208@qq.com"},
+]
+dependencies = ["requests>=2.33.1", "python-dotenv>=1.2.2", "rich>=14.3.4", "coverage>=7.13.5", "black>=26.3.1"]
+requires-python = ">=3.13.0"
+readme = "README.md"
+license = {text = "MIT"}
+
+
+[tool.pdm]
+distribution = false
+
+[tool.pdm.scripts]
+format-check = "black --check ."
+typecheck = "basedpyright"
+test = "python -m unittest discover -s test -p \"*.py\" -v"
+
+[dependency-groups]
+typecheck = [
+    "black>=25.9.0",
+    "basedpyright>=1.39.2",
+]
+dev = [
+    "pre-commit>=4.6.0",
+]

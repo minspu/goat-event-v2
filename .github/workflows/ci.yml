@@ -1,0 +1,37 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install PDM
+        uses: pdm-project/setup-pdm@v4
+        with:
+          python-version: "3.13"
+          cache: true
+          cache-dependency-path: pdm.lock
+
+      - name: Install dependencies
+        run: pdm install -G typecheck
+
+      - name: Check Black formatting
+        run: pdm run format-check
+
+      - name: Run unittests
+        run: pdm run test
+
+      - name: Run type checks
+        run: pdm run typecheck
