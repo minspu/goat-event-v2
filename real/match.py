@@ -1,3 +1,6 @@
+# Copyright (c) 2026 FRC Team 6907, The G.O.A.T
+# Licensed under the MIT License.
+
 from __future__ import annotations
 
 from datetime import datetime

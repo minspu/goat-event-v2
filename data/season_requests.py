@@ -1,3 +1,6 @@
+# Copyright (c) 2026 FRC Team 6907, The G.O.A.T
+# Licensed under the MIT License.
+
 from typing import cast
 from data.frc_json import SeasonRequestType, request_paginated_season_frc_json, request_season_frc_json
 

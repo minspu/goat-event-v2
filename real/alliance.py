@@ -1,7 +1,10 @@
+# Copyright (c) 2026 FRC Team 6907, The G.O.A.T
+# Licensed under the MIT License.
+
 from __future__ import annotations
 
 from enum import IntEnum
-from typing import Optional
+from typing import Optional, cast
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -84,9 +87,10 @@ class Alliance(AllianceBase):
     def get_win_playoffs(self) -> list[Match]:
         from real.match import MatchResult
 
+        currentAlliance = cast(Alliance, self)
         result: list[Match] = []
-        for match in self.playoffMatches:
-            if match.get_result_by_alliance(self) == MatchResult.WIN:
+        for match in currentAlliance.playoffMatches:
+            if match.get_result_by_alliance(currentAlliance) == MatchResult.WIN:
                 result.append(match)
         return result
 

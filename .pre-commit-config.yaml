@@ -7,5 +7,3 @@ repos:
         args:
           - --license-filepath=LICENSE_HEADER.txt
           - --comment-style=#
-          - --detect-license-in-X-top-lines=5
-          - --remove-header
